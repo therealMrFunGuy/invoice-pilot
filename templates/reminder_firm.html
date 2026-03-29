@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment Overdue</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f4f5f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f5f7;padding:40px 20px;">
+<tr><td align="center">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+
+<!-- Header -->
+<tr>
+<td style="background:linear-gradient(135deg,#b71c1c 0%,#d32f2f 100%);padding:32px 40px;text-align:center;">
+<h1 style="margin:0;color:#ffffff;font-size:24px;font-weight:700;">{{ company_name }}</h1>
+<p style="margin:8px 0 0;color:#ffcdd2;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:2px;">Payment Overdue</p>
+</td>
+</tr>
+
+<!-- Body -->
+<tr>
+<td style="padding:40px;">
+<p style="margin:0 0 24px;color:#333;font-size:16px;line-height:1.6;">
+Dear {{ client_name }},
+</p>
+<p style="margin:0 0 24px;color:#555;font-size:15px;line-height:1.6;">
+We are writing to inform you that invoice <strong style="color:#1a1a2e;">{{ invoice_number }}</strong> is now <strong style="color:#d32f2f;">{{ days_overdue }} days past due</strong>. The original due date was {{ due_date }}.
+</p>
+<p style="margin:0 0 24px;color:#555;font-size:15px;line-height:1.6;">
+We kindly request that you arrange payment as soon as possible to avoid any further action.
+</p>
+
+{% if late_fee_notice %}
+<!-- Late Fee Warning -->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#fff3e0;border-radius:8px;border:1px solid #ffcc80;margin-bottom:24px;">
+<tr>
+<td style="padding:16px 20px;">
+<p style="margin:0;color:#e65100;font-size:14px;line-height:1.5;">
+<strong>Late Fee Notice:</strong> {{ late_fee_notice }}
+</p>
+</td>
+</tr>
+</table>
+{% endif %}
+
+<!-- Amount Card -->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#ffebee;border-radius:8px;border:1px solid #ef9a9a;margin-bottom:32px;">
+<tr>
+<td style="padding:24px;text-align:center;">
+<p style="margin:0 0 4px;color:#666;font-size:13px;text-transform:uppercase;letter-spacing:1px;">Total Amount Due</p>
+<p style="margin:0 0 8px;color:#b71c1c;font-size:32px;font-weight:700;">{{ total }}</p>
+{% if original_total and original_total != total %}
+<p style="margin:0;color:#999;font-size:13px;">Original amount: {{ original_total }} + late fees</p>
+{% endif %}
+</td>
+</tr>
+</table>
+
+<!-- Pay Button -->
+{% if payment_link %}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+<tr>
+<td align="center" style="padding-bottom:32px;">
+<a href="{{ payment_link }}" style="display:inline-block;background:linear-gradient(135deg,#d32f2f 0%,#b71c1c 100%);color:#ffffff;text-decoration:none;padding:16px 48px;border-radius:8px;font-size:16px;font-weight:600;">Pay Immediately</a>
+</td>
+</tr>
+</table>
+{% endif %}
+
+<p style="margin:0;color:#555;font-size:15px;line-height:1.6;">
+If you have already sent payment, please let us know so we can update our records. For any questions or to discuss payment arrangements, please reply to this email.
+</p>
+</td>
+</tr>
+
+<!-- Footer -->
+<tr>
+<td style="background-color:#f8f9ff;padding:24px 40px;text-align:center;border-top:1px solid #eee;">
+<p style="margin:0;color:#999;font-size:12px;">Sent by {{ company_name }} via InvoicePilot</p>
+</td>
+</tr>
+
+</table>
+</td></tr>
+</table>
+{% if tracking_url %}<img src="{{ tracking_url }}" width="1" height="1" style="display:none;" alt="">{% endif %}
+</body>
+</html>

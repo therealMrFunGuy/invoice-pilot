@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment Reminder</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f4f5f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f5f7;padding:40px 20px;">
+<tr><td align="center">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+
+<!-- Header -->
+<tr>
+<td style="background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);padding:32px 40px;text-align:center;">
+<h1 style="margin:0;color:#ffffff;font-size:24px;font-weight:700;">{{ company_name }}</h1>
+<p style="margin:8px 0 0;color:#ffc107;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:2px;">Payment Reminder</p>
+</td>
+</tr>
+
+<!-- Body -->
+<tr>
+<td style="padding:40px;">
+<p style="margin:0 0 24px;color:#333;font-size:16px;line-height:1.6;">
+Hi {{ client_name }},
+</p>
+<p style="margin:0 0 24px;color:#555;font-size:15px;line-height:1.6;">
+I hope this message finds you well. This is a friendly reminder that invoice <strong style="color:#1a1a2e;">{{ invoice_number }}</strong> was due on <strong>{{ due_date }}</strong> and appears to remain unpaid.
+</p>
+<p style="margin:0 0 32px;color:#555;font-size:15px;line-height:1.6;">
+If you have already sent payment, please disregard this message. Otherwise, we would appreciate payment at your earliest convenience.
+</p>
+
+<!-- Amount Card -->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#fff8e1;border-radius:8px;border:1px solid #ffe082;margin-bottom:32px;">
+<tr>
+<td style="padding:24px;text-align:center;">
+<p style="margin:0 0 4px;color:#666;font-size:13px;text-transform:uppercase;letter-spacing:1px;">Amount Due</p>
+<p style="margin:0 0 8px;color:#1a1a2e;font-size:28px;font-weight:700;">{{ total }}</p>
+<p style="margin:0;color:#f57f17;font-size:13px;font-weight:600;">{{ days_overdue }} day{{ 's' if days_overdue != 1 else '' }} past due</p>
+</td>
+</tr>
+</table>
+
+<!-- Pay Button -->
+{% if payment_link %}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+<tr>
+<td align="center" style="padding-bottom:32px;">
+<a href="{{ payment_link }}" style="display:inline-block;background:linear-gradient(135deg,#6c63ff 0%,#5a52d5 100%);color:#ffffff;text-decoration:none;padding:16px 48px;border-radius:8px;font-size:16px;font-weight:600;">Pay Now</a>
+</td>
+</tr>
+</table>
+{% endif %}
+
+<p style="margin:0;color:#555;font-size:15px;line-height:1.6;">
+If you have any questions about this invoice, please do not hesitate to reach out. We are happy to help.
+</p>
+</td>
+</tr>
+
+<!-- Footer -->
+<tr>
+<td style="background-color:#f8f9ff;padding:24px 40px;text-align:center;border-top:1px solid #eee;">
+<p style="margin:0;color:#999;font-size:12px;">Sent by {{ company_name }} via InvoicePilot</p>
+</td>
+</tr>
+
+</table>
+</td></tr>
+</table>
+{% if tracking_url %}<img src="{{ tracking_url }}" width="1" height="1" style="display:none;" alt="">{% endif %}
+</body>
+</html>

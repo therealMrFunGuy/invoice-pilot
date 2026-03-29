@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Final Payment Notice</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f4f5f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f5f7;padding:40px 20px;">
+<tr><td align="center">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+
+<!-- Header -->
+<tr>
+<td style="background:linear-gradient(135deg,#4a0000 0%,#8b0000 100%);padding:32px 40px;text-align:center;">
+<h1 style="margin:0;color:#ffffff;font-size:24px;font-weight:700;">{{ company_name }}</h1>
+<p style="margin:8px 0 0;color:#ff6666;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:3px;">FINAL NOTICE</p>
+</td>
+</tr>
+
+<!-- Urgent Banner -->
+<tr>
+<td style="background-color:#d32f2f;padding:12px 40px;text-align:center;">
+<p style="margin:0;color:#ffffff;font-size:14px;font-weight:600;">Immediate payment required to avoid further action</p>
+</td>
+</tr>
+
+<!-- Body -->
+<tr>
+<td style="padding:40px;">
+<p style="margin:0 0 24px;color:#333;font-size:16px;line-height:1.6;">
+Dear {{ client_name }},
+</p>
+<p style="margin:0 0 24px;color:#555;font-size:15px;line-height:1.6;">
+Despite our previous reminders, invoice <strong style="color:#1a1a2e;">{{ invoice_number }}</strong> remains unpaid. This invoice was due on <strong>{{ due_date }}</strong> and is now <strong style="color:#d32f2f;">{{ days_overdue }} days overdue</strong>.
+</p>
+<p style="margin:0 0 24px;color:#555;font-size:15px;line-height:1.6;">
+This is our final notice before we escalate this matter. We strongly urge you to settle this balance immediately.
+</p>
+
+<!-- Amount Card -->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#1a1a2e;border-radius:8px;margin-bottom:32px;">
+<tr>
+<td style="padding:28px;text-align:center;">
+<p style="margin:0 0 4px;color:#aaa;font-size:13px;text-transform:uppercase;letter-spacing:1px;">Total Amount Due</p>
+<p style="margin:0 0 4px;color:#ff6666;font-size:36px;font-weight:700;">{{ total }}</p>
+{% if original_total and original_total != total %}
+<p style="margin:0;color:#888;font-size:12px;">Includes late fees (original: {{ original_total }})</p>
+{% endif %}
+</td>
+</tr>
+</table>
+
+<!-- Timeline -->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:32px;">
+<tr>
+<td style="padding:8px 0;border-bottom:1px solid #eee;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+<tr>
+<td style="color:#999;font-size:13px;width:120px;">Invoice Date</td>
+<td style="color:#333;font-size:13px;">{{ created_date }}</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td style="padding:8px 0;border-bottom:1px solid #eee;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+<tr>
+<td style="color:#999;font-size:13px;width:120px;">Due Date</td>
+<td style="color:#d32f2f;font-size:13px;font-weight:600;">{{ due_date }}</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td style="padding:8px 0;border-bottom:1px solid #eee;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+<tr>
+<td style="color:#999;font-size:13px;width:120px;">Days Overdue</td>
+<td style="color:#d32f2f;font-size:13px;font-weight:700;">{{ days_overdue }} days</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td style="padding:8px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+<tr>
+<td style="color:#999;font-size:13px;width:120px;">Reminders Sent</td>
+<td style="color:#333;font-size:13px;">{{ reminder_count }} previous reminders</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+
+<!-- Pay Button -->
+{% if payment_link %}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+<tr>
+<td align="center" style="padding-bottom:32px;">
+<a href="{{ payment_link }}" style="display:inline-block;background:linear-gradient(135deg,#d32f2f 0%,#8b0000 100%);color:#ffffff;text-decoration:none;padding:18px 56px;border-radius:8px;font-size:17px;font-weight:700;text-transform:uppercase;letter-spacing:1px;">Pay Now</a>
+</td>
+</tr>
+</table>
+{% endif %}
+
+<p style="margin:0;color:#555;font-size:15px;line-height:1.6;">
+If you are experiencing financial difficulties, please contact us immediately to discuss payment arrangements. We prefer to resolve this matter amicably.
+</p>
+</td>
+</tr>
+
+<!-- Footer -->
+<tr>
+<td style="background-color:#f8f9ff;padding:24px 40px;text-align:center;border-top:1px solid #eee;">
+<p style="margin:0;color:#999;font-size:12px;">Sent by {{ company_name }} via InvoicePilot</p>
+</td>
+</tr>
+
+</table>
+</td></tr>
+</table>
+{% if tracking_url %}<img src="{{ tracking_url }}" width="1" height="1" style="display:none;" alt="">{% endif %}
+</body>
+</html>

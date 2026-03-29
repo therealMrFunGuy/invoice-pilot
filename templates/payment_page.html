@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pay Invoice {{ invoice_number }}</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+    max-width: 520px;
+    width: 100%;
+    overflow: hidden;
+  }
+  .card-header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    padding: 32px 40px;
+    text-align: center;
+  }
+  .card-header h1 {
+    color: #fff;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .card-header .inv-label {
+    color: #6c63ff;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  .card-body {
+    padding: 40px;
+  }
+  .amount-section {
+    text-align: center;
+    padding: 28px 0;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 28px;
+  }
+  .amount-label {
+    color: #999;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+  .amount-value {
+    color: #1a1a2e;
+    font-size: 42px;
+    font-weight: 700;
+    letter-spacing: -1px;
+  }
+  .amount-currency {
+    color: #6c63ff;
+    font-size: 18px;
+    font-weight: 600;
+    vertical-align: super;
+  }
+  .details {
+    margin-bottom: 28px;
+  }
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 14px;
+  }
+  .detail-row:last-child { border-bottom: none; }
+  .detail-label { color: #888; }
+  .detail-value { color: #333; font-weight: 600; }
+  .items-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 28px;
+  }
+  .items-table th {
+    background: #f8f9ff;
+    color: #666;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 2px solid #e8eaf6;
+  }
+  .items-table th:last-child { text-align: right; }
+  .items-table td {
+    padding: 10px 12px;
+    font-size: 14px;
+    color: #333;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .items-table td:last-child {
+    text-align: right;
+    font-weight: 600;
+  }
+  .totals {
+    background: #f8f9ff;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 28px;
+  }
+  .total-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 14px;
+    color: #555;
+  }
+  .total-row.grand {
+    border-top: 2px solid #e0e0e0;
+    margin-top: 8px;
+    padding-top: 12px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a1a2e;
+  }
+  .total-row.grand .total-val { color: #6c63ff; }
+  .pay-btn {
+    display: block;
+    width: 100%;
+    background: linear-gradient(135deg, #6c63ff 0%, #5a52d5 100%);
+    color: #fff;
+    border: none;
+    padding: 18px;
+    border-radius: 10px;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .pay-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(108,99,255,0.35);
+  }
+  .pay-btn:active { transform: translateY(0); }
+  .no-link {
+    text-align: center;
+    padding: 18px;
+    background: #f0f0f0;
+    border-radius: 10px;
+    color: #666;
+    font-size: 14px;
+  }
+  .paid-badge {
+    display: inline-block;
+    background: #e8f5e9;
+    color: #2e7d32;
+    font-weight: 700;
+    font-size: 16px;
+    padding: 12px 32px;
+    border-radius: 8px;
+    margin-top: 8px;
+  }
+  .overdue-badge {
+    display: inline-block;
+    background: #ffebee;
+    color: #c62828;
+    font-weight: 600;
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 4px;
+    margin-top: 8px;
+  }
+  {% if notes %}.notes {
+    background: #fafafa;
+    border-left: 3px solid #6c63ff;
+    padding: 12px 16px;
+    margin-bottom: 28px;
+    border-radius: 0 6px 6px 0;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.5;
+  }{% endif %}
+  .footer {
+    text-align: center;
+    padding: 20px 40px;
+    background: #f8f9ff;
+    border-top: 1px solid #eee;
+    color: #bbb;
+    font-size: 12px;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="card-header">
+    <h1>{{ company_name }}</h1>
+    <div class="inv-label">Invoice {{ invoice_number }}</div>
+  </div>
+  <div class="card-body">
+    <div class="amount-section">
+      <div class="amount-label">Amount Due</div>
+      {% if status == 'paid' %}
+      <div class="paid-badge">PAID</div>
+      {% else %}
+      <div class="amount-value">{{ total }}</div>
+      {% if status == 'overdue' %}
+      <div class="overdue-badge">OVERDUE - {{ days_overdue }} days past due</div>
+      {% endif %}
+      {% endif %}
+    </div>
+
+    <div class="details">
+      <div class="detail-row">
+        <span class="detail-label">Billed To</span>
+        <span class="detail-value">{{ client_name }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Invoice Date</span>
+        <span class="detail-value">{{ created_date }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Due Date</span>
+        <span class="detail-value">{{ due_date }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Status</span>
+        <span class="detail-value">{{ status | upper }}</span>
+      </div>
+    </div>
+
+    <table class="items-table">
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th style="text-align:center;">Qty</th>
+          <th style="text-align:right;">Rate</th>
+          <th>Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td>{{ item.description }}</td>
+          <td style="text-align:center;">{{ item.qty }}</td>
+          <td style="text-align:right;">{{ format_currency(item.rate) }}</td>
+          <td>{{ format_currency(item.qty * item.rate) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="totals">
+      <div class="total-row">
+        <span>Subtotal</span>
+        <span>{{ subtotal_fmt }}</span>
+      </div>
+      {% if tax_rate > 0 %}
+      <div class="total-row">
+        <span>Tax ({{ tax_rate }}%)</span>
+        <span>{{ tax_fmt }}</span>
+      </div>
+      {% endif %}
+      {% if late_fee_applied > 0 %}
+      <div class="total-row" style="color:#d32f2f;">
+        <span>Late Fee</span>
+        <span>{{ late_fee_fmt }}</span>
+      </div>
+      {% endif %}
+      <div class="total-row grand">
+        <span>Total</span>
+        <span class="total-val">{{ total }}</span>
+      </div>
+    </div>
+
+    {% if notes %}
+    <div class="notes">{{ notes }}</div>
+    {% endif %}
+
+    {% if status != 'paid' %}
+      {% if payment_link %}
+      <a href="{{ payment_link }}" class="pay-btn">Pay {{ total }} Now</a>
+      {% else %}
+      <div class="no-link">Please contact us for payment instructions.</div>
+      {% endif %}
+    {% else %}
+    <div style="text-align:center;color:#2e7d32;font-size:15px;padding:12px;">
+      This invoice has been paid. Thank you!
+    </div>
+    {% endif %}
+  </div>
+  <div class="footer">Powered by InvoicePilot</div>
+</div>
+</body>
+</html>

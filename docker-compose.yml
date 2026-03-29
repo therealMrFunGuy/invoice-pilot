@@ -1,0 +1,25 @@
+services:
+  invoice-pilot:
+    build: .
+    container_name: mfg-invoice-pilot
+    ports:
+      - "8450:8450"
+    volumes:
+      - invoice-data:/data/invoice-pilot
+    environment:
+      - PORT=8450
+      - INVOICEPILOT_DB=/data/invoice-pilot/invoicepilot.db
+      - SMTP_HOST=${SMTP_HOST:-}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USER=${SMTP_USER:-}
+      - SMTP_PASS=${SMTP_PASS:-}
+      - FROM_EMAIL=${FROM_EMAIL:-invoices@invoicepilot.local}
+      - FROM_NAME=${FROM_NAME:-InvoicePilot}
+      - LATE_FEE_PERCENT=${LATE_FEE_PERCENT:-2.0}
+      - REMINDER_INTERVAL_MINUTES=${REMINDER_INTERVAL_MINUTES:-60}
+    restart: unless-stopped
+    cpus: 0.5
+    mem_limit: 256m
+
+volumes:
+  invoice-data:
