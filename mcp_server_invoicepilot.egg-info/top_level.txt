@@ -1,0 +1,7 @@
+calculator
+db
+email_sender
+mcp_server
+pdf_gen
+reminders
+server

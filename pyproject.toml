@@ -21,5 +21,5 @@ invoicepilot-api = "server:main"
 requires = ["setuptools>=75.0"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools.packages.find]
-where = ["."]
+[tool.setuptools]
+py-modules = ["mcp_server", "server", "calculator", "db", "email_sender", "pdf_gen", "reminders"]

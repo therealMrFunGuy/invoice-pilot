@@ -1,0 +1,3 @@
+[console_scripts]
+invoicepilot-api = server:main
+invoicepilot-mcp = mcp_server:mcp.run
