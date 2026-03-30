@@ -5,11 +5,13 @@ import logging
 from datetime import datetime, timezone
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException, Query, Response
+from fastapi import Depends, FastAPI, HTTPException, Query, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+
+from auth_client import require_auth
 
 import db
 from calculator import (
@@ -32,6 +34,7 @@ template_env = Environment(
     autoescape=select_autoescape(["html"]),
 )
 
+AUTH_SERVICE_URL = os.environ.get("AUTH_SERVICE_URL", "http://localhost:8499")
 FREE_TIER_LIMIT = 5
 REMINDER_INTERVAL = int(os.environ.get("REMINDER_INTERVAL_MINUTES", "60"))
 
@@ -365,7 +368,7 @@ def check_free_tier():
 # --- Invoice CRUD ---
 
 @app.post("/invoices", status_code=201)
-def create_invoice(body: InvoiceCreate):
+async def create_invoice(body: InvoiceCreate, auth: dict = Depends(require_auth)):
     check_free_tier()
     items = [i.model_dump() for i in body.items]
     totals = calculate_invoice_totals(items, body.tax_rate)
@@ -385,15 +388,16 @@ def create_invoice(body: InvoiceCreate):
 
 
 @app.get("/invoices")
-def list_invoices(
+async def list_invoices(
     status: str | None = Query(None, description="Filter by status"),
     client_email: str | None = Query(None),
+    auth: dict = Depends(require_auth),
 ):
     return db.list_invoices(status=status, client_email=client_email)
 
 
 @app.get("/invoices/{invoice_id}")
-def get_invoice(invoice_id: int):
+async def get_invoice(invoice_id: int, auth: dict = Depends(require_auth)):
     inv = db.get_invoice(invoice_id)
     if not inv:
         raise HTTPException(404, "Invoice not found")
@@ -401,7 +405,7 @@ def get_invoice(invoice_id: int):
 
 
 @app.put("/invoices/{invoice_id}")
-def update_invoice(invoice_id: int, body: InvoiceUpdate):
+async def update_invoice(invoice_id: int, body: InvoiceUpdate, auth: dict = Depends(require_auth)):
     existing = db.get_invoice(invoice_id)
     if not existing:
         raise HTTPException(404, "Invoice not found")
@@ -424,7 +428,7 @@ def update_invoice(invoice_id: int, body: InvoiceUpdate):
 
 
 @app.delete("/invoices/{invoice_id}")
-def delete_invoice(invoice_id: int):
+async def delete_invoice(invoice_id: int, auth: dict = Depends(require_auth)):
     if not db.delete_invoice(invoice_id):
         raise HTTPException(404, "Invoice not found")
     return {"status": "deleted", "id": invoice_id}
@@ -433,7 +437,7 @@ def delete_invoice(invoice_id: int):
 # --- Invoice Actions ---
 
 @app.post("/invoices/{invoice_id}/send")
-def send_invoice(invoice_id: int):
+async def send_invoice(invoice_id: int, auth: dict = Depends(require_auth)):
     inv = db.get_invoice(invoice_id)
     if not inv:
         raise HTTPException(404, "Invoice not found")
@@ -477,7 +481,7 @@ def send_invoice(invoice_id: int):
 
 
 @app.post("/invoices/{invoice_id}/mark-paid")
-def mark_paid(invoice_id: int):
+async def mark_paid(invoice_id: int, auth: dict = Depends(require_auth)):
     inv = db.get_invoice(invoice_id)
     if not inv:
         raise HTTPException(404, "Invoice not found")
@@ -490,7 +494,7 @@ def mark_paid(invoice_id: int):
 
 
 @app.post("/invoices/{invoice_id}/remind")
-def send_reminder(invoice_id: int):
+async def send_reminder(invoice_id: int, auth: dict = Depends(require_auth)):
     result = manually_send_reminder(invoice_id)
     if "error" in result:
         raise HTTPException(400, result["error"])
@@ -500,7 +504,7 @@ def send_reminder(invoice_id: int):
 # --- PDF ---
 
 @app.get("/invoices/{invoice_id}/pdf")
-def get_invoice_pdf(invoice_id: int):
+async def get_invoice_pdf(invoice_id: int, auth: dict = Depends(require_auth)):
     inv = db.get_invoice(invoice_id)
     if not inv:
         raise HTTPException(404, "Invoice not found")
@@ -559,12 +563,12 @@ def payment_page(invoice_id: int):
 # --- Dashboard & Clients ---
 
 @app.get("/dashboard")
-def dashboard():
+async def dashboard(auth: dict = Depends(require_auth)):
     return db.get_dashboard_stats()
 
 
 @app.get("/clients")
-def list_clients():
+async def list_clients(auth: dict = Depends(require_auth)):
     return db.get_unique_clients()
 
 
